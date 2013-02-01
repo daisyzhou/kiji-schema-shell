@@ -61,8 +61,8 @@ class MockKijiSystem extends AbstractKijiSystem {
 
   override def getTableLayout(instance: String, table: String): Option[KijiTableLayout] = {
     try {
-      Some(new KijiTableLayout(TableLayoutDesc.newBuilder(
-          instanceData(instance)(table).getDesc()).build(), null))
+      Some(KijiTableLayout.newLayout(TableLayoutDesc.newBuilder(
+          instanceData(instance)(table).getDesc()).build()))
     } catch {
       case nsee: NoSuchElementException => None
     }
@@ -95,7 +95,8 @@ class MockKijiSystem extends AbstractKijiSystem {
       // Verify that the layout has all the required values set.
       val layoutCopy = TableLayoutDesc.newBuilder(layout).build()
       // Verify that the update is legal.
-      val wrappedLayout = new KijiTableLayout(layoutCopy, instanceData(instance)(table))
+      val wrappedLayout =
+          KijiTableLayout.createUpdatedLayout(layoutCopy, instanceData(instance)(table))
       // TODO: Process deletes manually.
       instanceData(instance)(table) = wrappedLayout // Update our copy to match.
     } catch {
